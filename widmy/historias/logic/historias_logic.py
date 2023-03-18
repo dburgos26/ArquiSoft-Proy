@@ -1,4 +1,6 @@
+import json
 from ..models import Historia
+from datetime import datetime
 
 def get_historias():
     historias = Historia.objects.all()
@@ -18,7 +20,16 @@ def update_historia(documento, new_historia):
     historia.save()
     return historia
 
-def create_historia(historia):
-    historia = Historia(documento=historia["documento"], nombre=historia["nombre"], apellido=historia["apellido"], fecha_nacimiento=historia["fecha_nacimiento"], sexo=historia["sexo"])
+def create_historia(request):
+    historia_json = json.loads(request.body)
+    fecha_nacimiento_str = historia_json['fecha_nacimiento']
+    historia = Historia(
+        nombrePaciente=historia_json['nombre'],
+        apellidoPaciente=historia_json['apellido'],
+        edadPaciente=historia_json['edad'],
+        documento=historia_json['documento'],
+        fechaNacimiento=datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date(),
+        descripcion=historia_json['descripcion']
+    )
     historia.save()
     return historia
